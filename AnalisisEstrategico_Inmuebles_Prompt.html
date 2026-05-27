@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt: Análisis Estratégico Inmobiliario — inmuebles_bbva × DENUE</title>
+<style>
+  :root {
+    --bg:       #0F172A;
+    --surface:  #1E293B;
+    --surface2: #0D1117;
+    --border:   #334155;
+    --gold:     #C9A452;
+    --gold-dim: #E8D5A0;
+    --text:     #E2D8C4;
+    --muted:    #94A3B8;
+    --blue:     #60A5FA;
+    --green:    #7FBC8C;
+    --red:      #F87171;
+    --purple:   #C084FC;
+    --cyan:     #67E8F9;
+    --orange:   #FB923C;
+    --teal:     #2DD4BF;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  /* ── HEADER ── */
+  .page-header {
+    background: var(--surface2);
+    border-bottom: 2px solid var(--gold);
+    padding: 1.1rem 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-left h1 { font-size: .97rem; font-weight: 700; color: #fff; }
+  .header-left h1 span { color: var(--gold); }
+  .header-left p { font-size: .72rem; color: var(--muted); margin-top: .1rem; }
+  .header-right { display: flex; gap: .45rem; align-items: center; flex-wrap: wrap; }
+  .badge-sm {
+    background: rgba(201,164,82,.12);
+    border: 1px solid rgba(201,164,82,.3);
+    color: var(--gold);
+    font-size: .68rem; font-weight: 700;
+    padding: .15rem .55rem; border-radius: 99px;
+  }
+  .copy-btn {
+    background: var(--gold); color: #0F172A;
+    font-size: .76rem; font-weight: 700;
+    border: none; border-radius: 6px;
+    padding: .35rem .95rem; cursor: pointer;
+    transition: background .15s;
+  }
+  .copy-btn:hover { background: #e0b85a; }
+
+  /* ── COLUMN LABELS ── */
+  .col-labels {
+    display: grid; grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 52px; z-index: 90;
+    background: var(--surface2);
+  }
+  .col-label {
+    padding: .38rem 1.15rem;
+    font-size: .67rem; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--muted);
+    display: flex; align-items: center; gap: .35rem;
+  }
+  .col-label:first-child { border-right: 1px solid var(--border); }
+  .dot { width: .45rem; height: .45rem; border-radius: 50%; }
+
+  /* ── MAIN GRID ── */
+  .main { display: grid; grid-template-columns: 1fr 1fr; }
+
+  /* ── SECTION DIVIDER ── */
+  .sec-label {
+    grid-column: 1 / -1;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    border-top: 2px solid var(--gold);
+    padding: .45rem 1.15rem;
+    display: flex; align-items: center; gap: .55rem;
+  }
+  .sec-num {
+    width: 1.45rem; height: 1.45rem; border-radius: 50%;
+    background: var(--gold); color: #0F172A;
+    font-size: .7rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .sec-title { font-size: .8rem; font-weight: 700; color: var(--gold-dim); }
+  .sec-tag {
+    margin-left: auto;
+    font-size: .65rem; font-weight: 600;
+    background: rgba(201,164,82,.1);
+    border: 1px solid rgba(201,164,82,.25);
+    color: var(--gold); padding: .1rem .5rem; border-radius: 99px;
+  }
+
+  /* ── MD / EXP COLS ── */
+  .md-col, .exp-col {
+    padding: .9rem 1.1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .md-col { border-right: 1px solid var(--border); }
+  .exp-col { background: var(--surface); }
+
+  /* ── MARKDOWN SYNTAX ── */
+  .md {
+    font-family: 'Cascadia Code','Fira Code','Consolas',monospace;
+    font-size: .76rem; line-height: 1.75;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  .md .h1    { color: var(--blue);    font-weight: 700; }
+  .md .h2    { color: var(--purple);  font-weight: 700; }
+  .md .h3    { color: var(--cyan);    font-weight: 700; }
+  .md .h4    { color: var(--teal);    font-weight: 700; }
+  .md .bold  { color: var(--gold-dim); font-weight: 700; }
+  .md .em    { color: var(--orange);  font-style: italic; }
+  .md .code  { color: #7DD3FC; background: rgba(255,255,255,.06); padding: .05em .28em; border-radius: 3px; }
+  .md .bullet { color: var(--gold); }
+  .md .num   { color: var(--green);  font-weight: 600; }
+  .md .dim   { color: var(--muted);  font-style: italic; }
+  .md .dash  { color: #334155; }
+  .md .tag   { color: var(--teal); }
+  .md .warn  { color: var(--red); }
+
+  /* ── EXPLANATION SIDE ── */
+  .exp-title {
+    font-size: .68rem; font-weight: 700;
+    letter-spacing: .07em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: .4rem;
+    display: flex; align-items: center; gap: .3rem;
+  }
+  .exp-title::before {
+    content: ''; display: inline-block;
+    width: 2px; height: .85rem;
+    background: var(--gold); border-radius: 1px;
+  }
+  .exp-body { font-size: .8rem; color: var(--muted); line-height: 1.6; }
+  .exp-body p { margin-bottom: .38rem; }
+  .exp-body p:last-child { margin-bottom: 0; }
+  .exp-body strong { color: var(--text); font-weight: 600; }
+  .exp-body em { color: var(--green); font-style: normal; }
+  .exp-body code {
+    font-family: 'Cascadia Code',monospace;
+    font-size: .75rem; color: #7DD3FC;
+    background: rgba(255,255,255,.06);
+    padding: .05em .28em; border-radius: 3px;
+  }
+  .why {
+    background: rgba(201,164,82,.07);
+    border-left: 2px solid var(--gold);
+    padding: .38rem .6rem;
+    border-radius: 0 6px 6px 0;
+    margin-top: .4rem; font-size: .77rem;
+    color: var(--text);
+  }
+  .why::before { content: '💡 '; }
+  .warn-box {
+    background: rgba(248,113,113,.07);
+    border-left: 2px solid var(--red);
+    padding: .38rem .6rem;
+    border-radius: 0 6px 6px 0;
+    margin-top: .4rem; font-size: .77rem;
+    color: var(--text);
+  }
+  .warn-box::before { content: '⚠ '; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: .28rem; margin-top: .4rem; }
+  .chip {
+    font-size: .67rem; font-weight: 600;
+    padding: .12rem .5rem; border-radius: 99px; border: 1px solid;
+  }
+  .chip.blue   { color: var(--blue);   border-color: rgba(96,165,250,.3);  background: rgba(96,165,250,.08); }
+  .chip.green  { color: var(--green);  border-color: rgba(127,188,140,.3); background: rgba(127,188,140,.08); }
+  .chip.gold   { color: var(--gold);   border-color: rgba(201,164,82,.35); background: rgba(201,164,82,.08); }
+  .chip.purple { color: var(--purple); border-color: rgba(192,132,252,.3); background: rgba(192,132,252,.08); }
+  .chip.red    { color: var(--red);    border-color: rgba(248,113,113,.3); background: rgba(248,113,113,.08); }
+  .chip.cyan   { color: var(--cyan);   border-color: rgba(103,232,249,.3); background: rgba(103,232,249,.08); }
+  .chip.orange { color: var(--orange); border-color: rgba(251,146,60,.3);  background: rgba(251,146,60,.08); }
+
+  /* ── SCHEMA TABLE ── */
+  .schema-table { width: 100%; border-collapse: collapse; margin-top: .35rem; font-size: .73rem; }
+  .schema-table th {
+    background: var(--surface2); color: var(--gold);
+    padding: .28rem .55rem; text-align: left;
+    font-weight: 700; border-bottom: 1px solid var(--border);
+  }
+  .schema-table td {
+    padding: .22rem .55rem; border-bottom: 1px solid rgba(51,65,85,.5);
+    color: var(--muted); vertical-align: top;
+  }
+  .schema-table td:first-child { color: #7DD3FC; font-family: monospace; font-size: .72rem; }
+  .schema-table tr:hover td { background: rgba(255,255,255,.02); }
+
+  /* ── HIDDEN PROMPT ── */
+  #prompt-raw { position: absolute; left: -9999px; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="header-left">
+    <h1>Análisis Estratégico Inmobiliario — <span>inmuebles_bbva × DENUE · Mérida</span></h1>
+    <p>Prompt de inteligencia de mercado inmobiliario · Clusters k-medias · Perfiles de cliente · Cruce geodatos</p>
+  </div>
+  <div class="header-right">
+    <span class="badge-sm">2 Bases de datos</span>
+    <span class="badge-sm">K-medias</span>
+    <span class="badge-sm">Perfiles</span>
+    <button class="copy-btn" onclick="copyPrompt()">⎘ Copiar prompt</button>
+  </div>
+</div>
+
+<div class="col-labels">
+  <div class="col-label"><div class="dot" style="background:#C9A452"></div>Formato Markdown (prompt)</div>
+  <div class="col-label"><div class="dot" style="background:#7FBC8C"></div>Explicación y propósito</div>
+</div>
+
+<div class="main">
+
+  <!-- ══ ROL ══ -->
+  <div class="sec-label">
+    <div class="sec-num">1</div>
+    <div class="sec-title">Rol y Capacidades</div>
+    <span class="sec-tag">Role Prompting</span>
+  </div>
+  <div class="md-col"><div class="md"><span class="h2">## Rol</span>
+Actúa como <span class="bold">**analista estratégico inmobiliario**</span>
+especializado en integrar y evaluar grandes volúmenes
+de datos de propiedades y de unidades económicas para
+identificar oportunidades de negocio y diseñar
+estrategias comerciales efectivas.
+
+<span class="h3">### Capacidades del rol (mantener todas):</span>
+<span class="bullet">-</span> Procesar y cruzar información de tipos de inmueble,
+  operaciones, ubicaciones, rangos de precios,
+  superficies y actividades económicas afines.
+<span class="bullet">-</span> Perfilar segmentos de mercado de alto valor.
+<span class="bullet">-</span> Detectar clusters de atributos diferenciales
+  por medio de <span class="bold">**k-medias**</span>.
+<span class="bullet">-</span> Formular modelos de negocio innovadores.
+<span class="bullet">-</span> Elaborar narrativas persuasivas y perfiles de
+  cliente detallados que guíen campañas de marketing
+  segmentadas y optimicen la venta y alquiler.</div></div>
+  <div class="exp-col">
+    <div class="exp-title">Rol compuesto multi-capacidad</div>
+    <div class="exp-body">
+      <p>A diferencia de un rol simple, aquí se declaran <strong>5 capacidades específicas</strong> que el modelo debe mantener activas durante toda la sesión. Esto evita que el modelo pierda alguna perspectiva (ej. olvidar hacer k-medias) a medida que el prompt avanza.</p>
+      <p>La instrucción <em>"mantener todas"</em> es una anclaje de consistencia: le indica al modelo que no puede elegir cuáles aplicar.</p>
+      <div class="why">Un rol con capacidades enumeradas produce respuestas más completas que uno genérico. El modelo sabe que debe combinar análisis cuantitativo (k-medias), redacción persuasiva y perfiles de cliente simultáneamente.</div>
+      <div class="chip-row">
+        <span class="chip gold">Analítico</span>
+        <span class="chip blue">K-medias</span>
+        <span class="chip purple">Narrativo</span>
+        <span class="chip green">Marketing</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TONO ══ -->
+  <div class="sec-label">
+    <div class="sec-num">2</div>
+    <div class="sec-title">Tono y Estilo de Comunicación</div>
+    <span class="sec-tag">Tone Setting</span>
+  </div>
+  <div class="md-col"><div class="md"><span class="h2">## Tono</span>
+Profesional, claro y persuasivo; transmite confianza
+y dominio del mercado.
+<span class="bullet">-</span> Usa lenguaje accesible que invite a imaginar
+  vivir o invertir.
+<span class="bullet">-</span> Evita exageraciones y tecnicismos innecesarios.
+<span class="bullet">-</span> Mantén cercanía y fluidez que impulse a la acción.</div></div>
+  <div class="exp-col">
+    <div class="exp-title">Tono dual: técnico + persuasivo</div>
+    <div class="exp-body">
+      <p>Definir el tono previene la tensión natural entre el análisis de datos (<em>frío y técnico</em>) y las descripciones de marketing (<em>cálido y aspiracional</em>). El prompt instruye explícitamente cómo balancearlos.</p>
+      <p>La frase <strong>"invite a imaginar vivir o invertir"</strong> activa el registro emocional en las descripciones de portafolio y perfiles, sin abandonar la rigurosidad.</p>
+      <div class="why">Sin una guía de tono, el modelo oscila entre un reporte árido y un texto publicitario superficial. Esta sección lo ancla en el punto medio correcto para el público objetivo: compradores e inversores.</div>
+      <div class="chip-row">
+        <span class="chip gold">Profesional</span>
+        <span class="chip green">Persuasivo</span>
+        <span class="chip blue">Accesible</span>
+        <span class="chip orange">Orientado a acción</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ OBJETIVO ══ -->
+  <div class="sec-label">
+    <div class="sec-num">3</div>
+    <div class="sec-title">Objetivo General y Resultado Deseado</div>
+    <span class="sec-tag">Goal + Output Contract</span>
+  </div>
+  <div class="md-col"><div class="md"><span class="h2">## Objetivo General</span>
+Formula un <span class="bold">**análisis estratégico inmobiliario integral**</span>
+de la oferta en Mérida, Yucatán, cruzando
+<span class="code">`inmuebles_bbva`</span> con <span class="code">`Denue`</span> para:
+
+<span class="num">1.</span> Clasificar inmuebles, detectar patrones de
+   precio/superficie y amenities.
+<span class="num">2.</span> Identificar clusters por k-medias y outliers.
+<span class="num">3.</span> Integrar el contexto económico/comercial
+   del entorno inmediato (DENUE).
+<span class="num">4.</span> Redactar una descripción general persuasiva.
+<span class="num">5.</span> Definir <span class="bold">**hasta 3–5 perfiles de cliente**</span>
+   vinculados a zonas/tipos de inmueble.
+<span class="num">6.</span> Entregar resultados en el formato específico
+   solicitado (secciones numeradas, tablas, viñetas).
+
+<span class="h3">### Resultado deseado</span>
+Informe detallado, comparativo y accionable,
+con recomendaciones y perfiles listos de manera
+explícita.</div></div>
+  <div class="exp-col">
+    <div class="exp-title">Macro-objetivo + micro-objetivos numerados</div>
+    <div class="exp-body">
+      <p>El objetivo está estructurado en dos niveles: <strong>macro</strong> (qué análisis realizar) y <strong>micro</strong> (6 entregables concretos numerados). Esto funciona como un contrato de salida que el modelo debe cumplir íntegramente.</p>
+      <p>Mencionar ambas bases de datos (<code>inmuebles_bbva</code> y <code>Denue</code>) en el objetivo activa el cruce de fuentes desde el inicio, no solo cuando se lo pide en las tareas.</p>
+      <p>El resultado deseado cierra con tres atributos claros: <em>detallado</em>, <em>comparativo</em> y <em>accionable</em> — adjetivos que el modelo usará como criterio de calidad interno.</p>
+      <div class="chip-row">
+        <span class="chip cyan">Cruce de bases</span>
+        <span class="chip blue">K-medias</span>
+        <span class="chip gold">Perfiles cliente</span>
+        <span class="chip green">Accionable</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCHEMA inmuebles_bbva ══ -->
+  <div class="sec-label">
+    <div class="sec-num">4</div>
+    <div class="sec-title">Esquema de Datos — inmuebles_bbva</div>
+    <span class="sec-tag">Data Schema</span>
+  </div>
+  <div class="md-col"><div class="md"><span class="h2">## Contexto y Alcance de Datos</span>
+<span class="h3">### Base principal: `inmuebles_bbva`</span>
+<span class="dim">Registros de inmuebles a la venta en Mérida, Yuc.</span>
+
+<span class="tag">url</span>           Hipervínculo al anuncio (EasyBroker)
+<span class="tag">tipo_propiedad</span> Casa, Departamento, Terreno, etc.
+<span class="tag">ciudad</span>        Ciudad (casi siempre "Mérida")
+<span class="tag">zona</span>          Zona/colonia/municipio del anunciante
+<span class="tag">titulo</span>        Título comercial del anuncio
+<span class="tag">price</span>         Precio con símbolos ("$2,361,000 EN VENTA")
+<span class="tag">dir_texto</span>     Dirección o referencia libre
+<span class="tag">titulo_desc</span>   Encabezado breve de la descripción
+<span class="tag">desc</span>          Descripción larga del inmueble
+<span class="tag">vendedor_nombre</span>  Agente o propietario
+<span class="tag">vendedor_empresa</span> Empresa/franquicia inmobiliaria
+<span class="tag">vendedor_telefono</span> Teléfono(s) de contacto
+<span class="tag">recamara</span>      Número de recámaras ("3 recámaras")
+<span class="tag">banio</span>         Número de baños ("2 baños")
+<span class="tag">estacionamiento</span>  Cajones ("1 estacionamiento")
+<span class="tag">metros_construccion</span> Sup. construida ("147.14 m²")
+<span class="tag">metros_terreno</span>    Sup. terreno ("225 m²")
+<span class="tag">id_</span>           ID interno del portal ("EB IU0220")
+<span class="tag">caracteristicas</span>  Amenidades en lista semiestructurada
+<span class="tag">ubicacion</span>     URL Google Maps con lat/long en q=
+<span class="tag">anio_cons</span>     Año/estado de construcción
+<span class="tag">piso</span>          Nivel del edificio ("Planta Baja", "3 pisos")</div></div>
+  <div class="exp-col">
+    <div class="exp-title">Diccionario de datos explícito</div>
+    <div class="exp-body">
+      <p>Incluir el <strong>esquema completo de columnas con ejemplos de valores</strong> es una de las técnicas más efectivas para prompts con datos estructurados. El modelo sabe exactamente qué información tiene disponible y cómo está codificada.</p>
+      <p>Los ejemplos de formato (<em>"$2,361,000 EN VENTA"</em>, <em>"147.14 m² de construcción"</em>) le indican al modelo que debe <strong>parsear cadenas de texto</strong>, no asumir valores numéricos limpios.</p>
+      <p>Columnas como <code>caracteristicas</code> (semiestructurada) y <code>ubicacion</code> (URL con lat/long) señalan implícitamente que se requiere extracción de datos antes del análisis.</p>
+      <div class="warn-box">Sin un diccionario explícito, el modelo puede confundir <code>metros_construccion</code> con <code>metros_terreno</code> o ignorar columnas clave como <code>caracteristicas</code> al hacer clusters.</div>
+      <div class="chip-row">
+        <span class="chip cyan">22 columnas documentadas</span>
+        <span class="chip orange">Valores de ejemplo</span>
+        <span class="chip red">Parsing requerido</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCHEMA DENUE ══ -->
+  <div class="sec-label">
+    <div class="sec-num">5</div>
+    <div class="sec-title">Esquema de Datos — DENUE</div>
+    <span class="sec-tag">Data Schema · Contexto geoeconómico</span>
+  </div>
+  <div class="md-col"><div class="md"><span class="h3">### Base secundaria: `Denue`</span>
+<span class="dim">Directorio Estadístico Nacional de Unidades</span>
+<span class="dim">Económicas — negocios en Yucatán</span>
+
+<span class="tag">id</span>              Identificador único
+<span class="tag">nom_estab</span>       Nombre del establecimiento
+<span class="tag">raz_social</span>      Razón social
+<span class="tag">codigo_act</span>      Código de actividad económica
+<span class="tag">nombre_act</span>      Nombre de la actividad
+<span class="tag">per_ocu</span>        Personal ocupado
+<span class="dim">— Dirección detallada —</span>
+<span class="tag">tipo_vial / nom_vial</span>   Calle/avenida
+<span class="tag">tipo_v_e_1 / nom_v_e_1</span> Intersección 1
+<span class="tag">numero_ext/int</span>  Número exterior/interior
+<span class="tag">tipo_asent / nomb_asent</span> Colonia/asentamiento
+<span class="tag">cod_postal</span>     Código postal
+<span class="dim">— Geo —</span>
+<span class="tag">cve_ent / entidad</span>   Entidad federativa
+<span class="tag">cve_mun / municipio</span> Municipio
+<span class="tag">cve_loc / localidad</span> Localidad
+<span class="tag">ageb / manzana</span>   Geoclave INEGI
+<span class="tag">latitud / longitud</span> Coordenadas
+<span class="dim">— Otros —</span>
+<span class="tag">telefono / correoelec</span>  Contacto
+<span class="tag">tipoUniEco</span>      Fijo, Móvil, Ambulante
+<span class="tag">fecha_alta</span>     Fecha de registro
+<span class="tag">tipo_actividad</span> Descripción amplia de giro</div></div>
+  <div class="exp-col">
+    <div class="exp-title">Base secundaria de enriquecimiento geoeconómico</div>
+    <div class="exp-body">
+      <p>DENUE actúa como la <strong>capa de contexto comercial</strong> del análisis. Al documentar su esquema completo (incluyendo campos geo: <code>entidad</code>, <code>municipio</code>, <code>localidad</code>, <code>ageb</code>), el prompt habilita el cruce espacial con <code>inmuebles_bbva</code>.</p>
+      <p>Los campos <code>nom_estab</code> y <code>raz_social</code> son los que permitirán detectar <strong>cadenas internacionales</strong> (Liverpool, Costco, Starbucks, etc.) que elevan el valor percibido de una zona.</p>
+      <p>La distinción <code>tipoUniEco</code> (Fijo/Móvil/Ambulante) permite filtrar solo negocios permanentes para el análisis de zona.</p>
+      <div class="why">El valor diferencial de este prompt está en el cruce DENUE-inmuebles. Sin documentar ambos esquemas, el modelo no sabría qué campos comparar para encontrar coincidencias geográficas.</div>
+      <div class="chip-row">
+        <span class="chip blue">Geodatos INEGI</span>
+        <span class="chip purple">Cadenas internacionales</span>
+        <span class="chip green">Giro económico</span>
+        <span class="chip cyan">Cruce espacial</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ LÍMITES ══ -->
+  <div class="sec-label">
+    <div class="sec-num">6</div>
+    <div class="sec-title">Límites, Supuestos y Lenguaje de Precisión</div>
+    <span class="sec-tag">Constraints + Calibration</span>
+  </div>
+  <div class="md-col"><div class="md"><span class="h2">## Límites y Supuestos</span>
+<span class="bullet">-</span> Ámbito geográfico: <span class="bold">**Mérida, Yucatán**</span>
+  y zonas/colonias en <span class="code">`inmuebles_bbva`</span>.
+<span class="bullet">-</span> Operaciones: principalmente venta
+  (contemplar alquiler/preventa si aparece).
+<span class="warn">-</span> <span class="warn">**No simular datos**</span> — usar solo los
+  datos proporcionados.
+
+<span class="h2">## Lenguaje y Precisión</span>
+<span class="bullet">-</span> Define y usa términos clave consistentemente
+  (<span class="em">*"amenities"*</span> = características/servicios).
+<span class="bullet">-</span> Si hablas de precios: especifica si es compra
+  o renta; usa la moneda que corresponda.
+<span class="warn">-</span> <span class="warn">Evita "barato"/"caro"</span> sin métricas;
+  usa percentiles o comparativos.
+<span class="bullet">-</span> Especifica unidades: <span class="bold">**m², MXN**</span>.
+<span class="bullet">-</span> Para precios/superficies: indica rangos,
+  medias y valores atípicos con precisión.
+<span class="bullet">-</span> Realiza las descripciones de manera detallada.</div></div>
+  <div class="exp-col">
+    <div class="exp-title">Anti-alucinación y calibración métrica</div>
+    <div class="exp-body">
+      <p><strong>"No simular datos"</strong> es una de las instrucciones más importantes del prompt. Sin ella, el modelo puede inventar precios, zonas o estadísticas con total confianza. Esta regla obliga al modelo a trabajar exclusivamente con los datos provistos.</p>
+      <p>La sección de <strong>Lenguaje y Precisión</strong> resuelve ambigüedades antes de que surjan: ¿precio de compra o renta? ¿m² de construcción o terreno? ¿barato según quién?</p>
+      <p>Prohibir términos subjetivos (<em>"barato", "caro"</em>) y sustituirlos por <em>percentiles o comparativos</em> garantiza que el análisis sea reproducible y creíble ante inversores.</p>
+      <div class="warn-box">Sin estas restricciones, el modelo puede afirmar "propiedades asequibles" sin definir asequible, o inventar datos de DENUE para zonas sin cobertura.</div>
+      <div class="chip-row">
+        <span class="chip red">Anti-alucinación</span>
+        <span class="chip gold">Unidades explícitas</span>
+        <span class="chip blue">Percentiles</span>
+        <span class="chip green">Compra vs Renta</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TAREA 1 ══ -->
+  <div class="sec-label">
+    <div class="sec-num">7</div>
+    <div class="sec-title">Tarea 1 — Análisis de Oferta + Integración DENUE</div>
+    <span class="sec-tag">Chain-of-Thought · Análisis cuantitativo</span>
+  </div>
+  <div class="md-col"><div class="md"><span class="h2">## Tarea 1: Análisis de oferta + DENUE</span>
+
+<span class="h3">### 1.1 Clasificación de inmuebles</span>
+<span class="bullet">-</span> Por <span class="code">`tipo_propiedad`</span> (casa, depto, oficina,
+  local, terreno, etc.).
+<span class="bullet">-</span> Por operación (venta, alquiler, preventa).
+<span class="bullet">-</span> Por rangos de precio y superficie
+  (define rangos lógicos o basados en cuantiles).
+
+<span class="h3">### 1.2 Frecuencia y Clusters (≥3 clusters)</span>
+<span class="bullet">-</span> Calcula frecuencia por ciudad y zona.
+<span class="bullet">-</span> Detecta clusters de amenities/características
+  con <span class="bold">**k-medias**</span>:
+  cochera, áreas comunes, seguridad 24 h,
+  vistas, sostenibilidad, smart home, etc.
+
+<span class="h3">### 1.3 Estadísticos Clave</span>
+<span class="bullet">-</span> Medias, mínimos, máximos de precio y
+  superficie por <span class="code">`tipo_propiedad`</span> y zona.
+<span class="bullet">-</span> Identifica <span class="bold">**outliers**</span> como oportunidades
+  o productos premium.
+<span class="bullet">-</span> Antigüedad promedio y patrones de estado
+  de construcción.
+
+<span class="h3">### 1.4 Cruce con DENUE</span>
+<span class="bullet">-</span> Integra zonas con <span class="code">`tipo_actividad`</span>.
+<span class="bullet">-</span> Identifica: turismo, NSE alto, galerías,
+  bazares, mercados orgánicos, gastronomía.
+<span class="bullet">-</span> Detecta <span class="bold">**cadenas/marcas internacionales**</span>
+  usando <span class="code">`nom_estab`</span> y <span class="code">`raz_social`</span>.
+  Decláralas explícitamente en el texto.
+<span class="bullet">-</span> Busca coincidencias entidad/municipio/
+  localidad entre DENUE y <span class="code">`dir_texto`</span>.
+<span class="bullet">-</span> Enlista principales tipos de actividad
+  por zona.
+<span class="bullet">-</span> <span class="bold">**Propiedades mayor beneficio/precio:**</span>
+  valida precios similares por zona; enumera
+  propiedades (url, tipo, precio, m², amenidades).
+<span class="bullet">-</span> Relaciona amenidades de zona (DENUE +
+  características de inmuebles).</div></div>
+  <div class="exp-col">
+    <div class="exp-title">Subtareas anidadas con CoT implícito</div>
+    <div class="exp-body">
+      <p>La Tarea 1 implementa <strong>Chain-of-Thought jerárquico</strong>: 4 sub-tareas numeradas que deben ejecutarse en orden lógico (clasificar → clusterizar → estadísticos → cruzar), cada una construyendo sobre la anterior.</p>
+      <p><strong>K-medias explícita (1.2)</strong>: al nombrar el algoritmo, el modelo sabe que debe razonar sobre grupos de features simultáneas, no solo ordenar por precio. El parámetro <em>"≥3 clusters"</em> previene una segmentación trivial de 2 grupos.</p>
+      <p>La instrucción de <strong>cadenas internacionales</strong> en 1.4 es altamente específica: los campos <code>nom_estab</code> y <code>raz_social</code> son los correctos para buscar "Costco", "H&amp;M", "Starbucks", etc. — y la orden "declararlas explícitamente" evita que el modelo las omita al resumir.</p>
+      <p>La validación de <strong>mayor beneficio/precio</strong> es un mini-análisis de valor relativo: encuentra el mejor precio dentro de inmuebles comparables en la misma zona, y debe presentarse como lista con URL clickeable.</p>
+      <div class="why">Sin sub-tareas numeradas, el modelo tiende a fusionar el análisis DENUE con el análisis de inmuebles, perdiendo la distinción entre lo que proviene de cada fuente.</div>
+      <div class="chip-row">
+        <span class="chip blue">K-medias ≥3 clusters</span>
+        <span class="chip purple">Outliers = premium</span>
+        <span class="chip cyan">Cadenas internacionales</span>
+        <span class="chip gold">Best value/price</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TAREA 2A ══ -->
+  <div class="sec-label">
+    <div class="sec-num">8</div>
+    <div class="sec-title">Tarea 2A — Descripción General del Portafolio</div>
+    <span class="sec-tag">Persuasive Writing · 300 palabras</span>
+  </div>
+  <div class="md-col"><div class="md"><span class="h2">## Tarea 2: Descripción y Perfiles</span>
+
+<span class="h3">### 2.1 Descripción general del portafolio</span>
+<span class="em">*(300 palabras)*</span>
+
+<span class="num">1.</span> Frase de enganche inicial.
+<span class="num">2.</span> Panorámica por zona, tipos de inmueble
+   y rangos de precio.
+<span class="num">3.</span> Resalta particularidades diferenciales
+   (premium, inversión, pluralidad de segmentos).
+<span class="num">4.</span> Integra datos de DENUE con contexto
+   de estilo de vida/servicios.
+<span class="num">5.</span> Incluye establecimientos internacionales
+   presentes en Mérida, especificando el
+   <span class="bold">**nombre exacto**</span> de cada uno.
+<span class="num">6.</span> Datos cuantitativos solo cuando aclaren
+   (en texto corrido, no saturar).
+
+<span class="h4">#### Formato de esta sección:</span>
+En la parte superior:
+<span class="bullet">-</span> <span class="bold">**1 imagen de Mérida**</span> obtenida de la web.
+<span class="bullet">-</span> Descripción de la imagen.
+<span class="bullet">-</span> Frase característica de la vivienda.</div></div>
+  <div class="exp-col">
+    <div class="exp-title">Narrativa persuasiva con estructura de gancho</div>
+    <div class="exp-body">
+      <p>La descripción del portafolio sigue la estructura clásica de copywriting inmobiliario: <strong>gancho → panorámica → diferenciadores → contexto de vida → prueba social (marcas)</strong>.</p>
+      <p>El límite de <strong>300 palabras</strong> disciplina la síntesis: el modelo no puede listar todo, debe priorizar los atributos más persuasivos. El parámetro de extensión también permite al lector comparar entre secciones.</p>
+      <p>La instrucción de incluir una <strong>imagen de Mérida con descripción</strong> en la parte superior crea un elemento visual que ancla el análisis en el lugar físico — técnica común en reportes de bienes raíces de alto impacto.</p>
+      <p>Mencionar establecimientos internacionales <strong>por nombre</strong> (no genéricamente "hay comercios de lujo") añade credibilidad y aspiracionalidad concreta.</p>
+      <div class="chip-row">
+        <span class="chip gold">Frase de enganche</span>
+        <span class="chip green">Imagen + contexto</span>
+        <span class="chip purple">Marcas por nombre</span>
+        <span class="chip blue">300 palabras</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TAREA 2B ══ -->
+  <div class="sec-label">
+    <div class="sec-num">9</div>
+    <div class="sec-title">Tarea 2B — Descripción por Cluster/Zona</div>
+    <span class="sec-tag">Cluster Narrative · 250 palabras × zona</span>
+  </div>
+  <div class="md-col"><div class="md"><span class="h3">### 2.2 Descripción por cluster/zona</span>
+<span class="em">*(250 palabras por descripción, sin tablas)*</span>
+
+Por cada cluster detectado:
+
+<span class="num">1.</span> Frase de enganche inicial.
+<span class="num">2.</span> Panorámica por zona, tipos de inmueble,
+   rangos de precio, características
+   generales y diferenciales.
+<span class="num">3.</span> Resalta particularidades diferenciales
+   (premium, inversión, pluralidad).
+<span class="num">4.</span> Integra datos de contexto de estilo de
+   vida/servicios importantes que hagan más
+   atractiva la zona.
+<span class="num">5.</span> Menciona establecimientos comerciales
+   de <span class="bold">**mayor atracción**</span>.
+<span class="num">6.</span> Datos cuantitativos solo cuando aclaren.
+
+<span class="h4">#### Después de cada descripción:</span>
+<span class="bold">**Fortalezas y debilidades de la zona**</span>
+(viñetas — no en tablas)</div></div>
+  <div class="exp-col">
+    <div class="exp-title">Micro-narrativas por cluster con F&D</div>
+    <div class="exp-body">
+      <p>Una descripción por cluster conecta el análisis cuantitativo (k-medias) con la narrativa comercial: cada grupo de inmuebles recibe su propia historia que lo hace accionable para el equipo de ventas.</p>
+      <p>La instrucción <strong>"sin tablas"</strong> en esta sección previene que el modelo repita la misma información tabulada de la Tarea 1. Aquí el objetivo es narrativa fluida, no comparación estructurada.</p>
+      <p>El bloque de <strong>Fortalezas y Debilidades</strong> post-descripción es un análisis FODA simplificado por zona: esencial para que un vendedor conozca los argumentos y las objeciones de cada área antes de la negociación.</p>
+      <div class="why">Separar "descripción persuasiva" de "F&D analíticas" en la misma sección permite al lector pasar del modo aspiracional al modo crítico sin confusión. Son dos audiencias distintas del mismo documento.</div>
+      <div class="chip-row">
+        <span class="chip blue">250 palabras / cluster</span>
+        <span class="chip red">Sin tablas</span>
+        <span class="chip gold">F&D post-descripción</span>
+        <span class="chip green">Establecimientos clave</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TAREA 2C ══ -->
+  <div class="sec-label">
+    <div class="sec-num">10</div>
+    <div class="sec-title">Tarea 2C — Perfiles de Cliente</div>
+    <span class="sec-tag">Buyer Persona · 250 palabras × perfil</span>
+  </div>
+  <div class="md-col"><div class="md"><span class="h3">### 2.3 Perfiles de cliente (3–5 perfiles)</span>
+<span class="em">*(250 palabras por perfil)*</span>
+
+Por cada perfil incluir:
+
+<span class="num">1.</span> Atributos demográficos + nivel socioeconómico.
+<span class="num">2.</span> Estilo de vida, motivaciones de compra/
+   alquiler, preocupaciones.
+<span class="num">3.</span> <span class="bold">**Argumentos de venta**</span> alineados con
+   conjuntos de inmuebles detectados.
+   → Siempre con la palabra
+   <span class="bold">**"argumento de venta:"**</span> al inicio.
+<span class="num">4.</span> Relación explícita con zonas/tipos de
+   inmueble más atractivos (justifica).
+<span class="num">5.</span> Al final: <span class="bold">**resumen en bullet points**</span>
+   de principales puntos a destacar.
+
+<span class="warn">Perfiles distintos y concretos para</span>
+<span class="warn">campañas segmentadas.</span>
+<span class="warn">Consistente el formato en cada perfil.</span>
+
+<span class="h4">#### Tabla comparativa entre perfiles:</span>
+Columnas: Perfil · Demografía/NSE ·
+Motivaciones · Preocupaciones ·
+Tipos de inmueble preferidos ·
+Zonas sugeridas · Argumentos clave.</div></div>
+  <div class="exp-col">
+    <div class="exp-title">Buyer Personas vinculados a datos reales</div>
+    <div class="exp-body">
+      <p>Los perfiles de cliente (<em>buyer personas</em>) son el puente entre el análisis cuantitativo y la estrategia comercial. Al anclarlos a <strong>zonas y tipos de inmueble específicos del dataset</strong>, no son ficticios sino inferidos de los datos.</p>
+      <p>La instrucción <strong>"argumento de venta:"</strong> como etiqueta obligatoria es una técnica de marcado semántico: garantiza que los argumentos sean fácilmente escaneables por el equipo de ventas sin leer los 250 palabras completos.</p>
+      <p>El <strong>resumen en bullet points al final</strong> de cada perfil crea una versión "tarjeta de referencia rápida" para vendedores en campo.</p>
+      <p>La <strong>tabla comparativa</strong> final agrega una vista de alto nivel que permite comparar los 3–5 perfiles de un vistazo — ideal para presentaciones ejecutivas.</p>
+      <div class="why">Los perfiles funcionan como briefing de campaña: demografía + motivaciones + objeciones + argumentos = todo lo que un asesor de ventas necesita para la primera llamada con un prospecto.</div>
+      <div class="chip-row">
+        <span class="chip gold">Argumento de venta: (etiqueta)</span>
+        <span class="chip green">Bullet resumen</span>
+        <span class="chip blue">Tabla comparativa</span>
+        <span class="chip purple">NSE explícito</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ FORMATO ══ -->
+  <div class="sec-label">
+    <div class="sec-num">11</div>
+    <div class="sec-title">Formato de Salida Requerido</div>
+    <span class="sec-tag">Output Schema</span>
+  </div>
+  <div class="md-col"><div class="md"><span class="h2">## Formato de Salida</span>
+Usa encabezados numerados (H2/H3), tablas para
+comparaciones y viñetas para listas.
+
+<span class="h3">### Orden de secciones mínimas:</span>
+<span class="num">1.</span> Descripción general del portafolio
+   <span class="dim">(imagen Mérida + descripción + frase)</span>
+<span class="num">2.</span> Descripción por cluster/zona
+   <span class="dim">(sin tablas)</span>
+<span class="num">3.</span> Fortalezas y debilidades de cada zona
+<span class="num">4.</span> Listado enumerado de propiedades
+   mayor beneficio/precio
+   <span class="dim">(url, tipo, precio, m², amenidades)</span>
+<span class="num">5.</span> Perfiles de cliente
+   <span class="dim">(descripción + bullet points)</span>
+<span class="num">6.</span> Tabla comparativa entre perfiles</div></div>
+  <div class="exp-col">
+    <div class="exp-title">Índice como contrato de entrega</div>
+    <div class="exp-body">
+      <p>El índice de secciones ordenado es el <strong>contrato de entrega final</strong>: el modelo sabe exactamente en qué orden presentar los resultados y puede auto-verificar si completó todas las secciones antes de terminar.</p>
+      <p>Combinar la instrucción de formato (<em>H2/H3, tablas, viñetas</em>) con el orden de secciones evita que el modelo invierta el orden lógico, por ejemplo colocando los perfiles antes del análisis de clusters.</p>
+      <p>Las notas en paréntesis (<em>"sin tablas"</em>, <em>"imagen Mérida"</em>) son recordatorios contextuales para cada sección, reforzando las instrucciones de las Tareas 1 y 2 en el momento de producir la salida.</p>
+      <div class="chip-row">
+        <span class="chip gold">6 secciones ordenadas</span>
+        <span class="chip blue">H2/H3 + tablas</span>
+        <span class="chip red">Sin tablas en clusters</span>
+        <span class="chip green">URL en listado</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CALIDAD ══ -->
+  <div class="sec-label">
+    <div class="sec-num">12</div>
+    <div class="sec-title">Razonamiento, Calidad e Iteración</div>
+    <span class="sec-tag">QA · Self-Consistency · Iteración</span>
+  </div>
+  <div class="md-col"><div class="md"><span class="h2">## Técnicas de Razonamiento y Calidad</span>
+
+<span class="h3">### Pensar paso a paso:</span>
+<span class="bullet">-</span> Expón la lógica para detectar clusters
+  y outliers.
+<span class="bullet">-</span> Desglosa problemas complejos en pasos
+  intermedios.
+
+<span class="h3">### Justificación y referencias:</span>
+<span class="bullet">-</span> Sustenta afirmaciones con evidencia.
+<span class="bullet">-</span> Cuando infieras (perfil demográfico),
+  indícalo como <span class="em">*inferencia basada en*</span>
+  <span class="em">*patrones del mercado*</span>.
+
+<span class="h3">### Control de calidad:</span>
+<span class="bullet">-</span> Revisa consistencia de cifras.
+<span class="bullet">-</span> Evita contradicciones texto ↔ tablas.
+<span class="bullet">-</span> Señala datos faltantes y cómo afectaron.
+
+<span class="h2">## Equilibrio y Flexibilidad</span>
+<span class="bullet">-</span> Suficiente detalle para ser accionable;
+  permite creatividad en redacción persuasiva.
+<span class="bullet">-</span> Si detectas insights adicionales relevantes
+  (correlaciones inesperadas), inclúyelos
+  justificadamente.
+
+<span class="h2">## Iteración</span>
+<span class="num">1.</span> Genera primera versión completa.
+<span class="num">2.</span> Señala dónde se requiere más detalle.
+<span class="num">3.</span> Permite instrucciones de seguimiento
+   para ajustar zonas, perfiles, tablas.
+
+<span class="h2">## Reglas de Estilo Finales</span>
+<span class="bullet">-</span> H2 para secciones; H3/H4 para subsecciones.
+<span class="bullet">-</span> Evita repetir datos exactos en exceso.
+<span class="bullet">-</span> No uses jerga técnica innecesaria.
+<span class="warn">-</span> <span class="warn">No omitas ninguna tarea o elemento.</span>
+<span class="warn">-</span> <span class="warn">No menciones el cruce con DENUE</span>
+  explícitamente en el texto final.
+<span class="warn">-</span> <span class="warn">Sé creativo pero formal.</span>
+<span class="warn">-</span> <span class="warn">No escribas la cantidad de palabras</span>
+  restringidas en las descripciones.</div></div>
+  <div class="exp-col">
+    <div class="exp-title">Auto-verificación, transparencia y meta-reglas</div>
+    <div class="exp-body">
+      <p>Las <strong>técnicas de razonamiento</strong> instruyen al modelo sobre cómo procesar internamente, no solo qué producir. "Expón la lógica de clusters" activa un razonamiento más riguroso que simplemente pedir "detecta clusters".</p>
+      <p>La instrucción de <strong>marcar inferencias</strong> ("inferencia basada en patrones del mercado") es una técnica de calibración de confianza: el lector puede distinguir lo que es dato de lo que es interpretación.</p>
+      <p><strong>"No menciones el cruce con DENUE"</strong> en el texto final es una regla de presentación: el lector del informe no necesita saber que los datos de contexto vienen de DENUE. La narrativa debe fluir como un análisis unificado.</p>
+      <p><strong>"No escribas la cantidad de palabras"</strong> evita que el modelo inserte notas como "(250 palabras)" en medio del texto, lo que rompe la experiencia de lectura del informe.</p>
+      <div class="warn-box">Las reglas de estilo finales son frecuentemente ignoradas por el modelo si no se colocan al final del prompt donde hay mayor peso de atención. Aquí están correctamente ubicadas.</div>
+      <div class="chip-row">
+        <span class="chip purple">Auto-verificación</span>
+        <span class="chip orange">Inferencia declarada</span>
+        <span class="chip red">DENUE invisible</span>
+        <span class="chip blue">Iteración en 3 pasos</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<textarea id="prompt-raw" readonly>
+## Rol
+Actúa como **analista estratégico inmobiliario** especializado en integrar y evaluar grandes volúmenes de datos de propiedades y de unidades económicas para identificar oportunidades de negocio y diseñar estrategias comerciales efectivas.
+
+### Capacidades del rol (mantener todas):
+- Procesar y cruzar información de tipos de inmueble, operaciones, ubicaciones, rangos de precios, superficies y actividades económicas afines.
+- Perfilar segmentos de mercado de alto valor.
+- Detectar clusters de atributos diferenciales por medio de **k-medias**.
+- Formular modelos de negocio innovadores.
+- Elaborar narrativas persuasivas y perfiles de cliente detallados que guíen campañas de marketing segmentadas y optimicen la venta y alquiler de los activos.
+
+## Tono
+Profesional, claro y persuasivo; transmite confianza y dominio del mercado.
+- Usa lenguaje accesible que invite a imaginar vivir o invertir.
+- Evita exageraciones y tecnicismos innecesarios.
+- Mantén cercanía y fluidez que impulse a la acción.
+
+## Objetivo General
+Formula un **análisis estratégico inmobiliario integral** de la oferta de propiedades en Mérida, Yucatán, cruzando la base `inmuebles_bbva` con la base `Denue` para:
+1. Clasificar inmuebles, detectar patrones de precio/superficie y amenities.
+2. Identificar clusters por medio de k-medias y outliers de valor.
+3. Integrar el contexto económico/comercial del entorno inmediato (DENUE).
+4. Redactar una descripción general persuasiva del portafolio.
+5. Definir hasta 3–5 perfiles de cliente claramente segmentados y vinculados a zonas/tipos de inmueble.
+6. Entregar resultados en el formato específico solicitado (secciones numeradas, tablas, viñetas).
+
+### Resultado deseado
+Un informe detallado, comparativo y accionable, con recomendaciones y perfiles listos de manera explícita.
+
+## Contexto y Alcance de Datos
+
+### Base principal: `inmuebles_bbva`
+Registros de inmuebles a la venta en Mérida, Yucatán. Columnas:
+- `url`: Hipervínculo al anuncio (EasyBroker).
+- `tipo_propiedad`: Categoría del inmueble (Casa, Departamento, Terreno, etc.).
+- `ciudad`: Ciudad (en este archivo casi siempre "Mérida").
+- `zona`: Zona/colonia/municipio referenciado por el anunciante.
+- `titulo`: Título comercial del anuncio.
+- `price`: Precio con símbolos y leyendas ("$2,361,000 EN VENTA").
+- `dir_texto`: Dirección o referencia libre.
+- `titulo_desc`: Encabezado breve de la descripción.
+- `desc`: Descripción larga del inmueble.
+- `vendedor_nombre`: Nombre del agente o propietario.
+- `vendedor_empresa`: Empresa/franquicia inmobiliaria.
+- `vendedor_telefono`: Teléfono(s) de contacto.
+- `recamara`: Número de recámaras ("3 recámaras").
+- `banio`: Número de baños ("2 baños").
+- `estacionamiento`: Cajones de estacionamiento ("1 estacionamiento").
+- `metros_construccion`: Superficie construida ("147.14 m² de construcción").
+- `metros_terreno`: Superficie de terreno ("225 m² de terreno").
+- `id_`: ID interno del portal ("EB IU0220").
+- `caracteristicas`: Amenidades/extras en lista semiestructurada.
+- `ubicacion`: URL de Google Maps con lat/long en q=.
+- `anio_cons`: Año o estado de construcción ("A estrenar", "2018").
+- `piso`: Nivel/pisos del edificio ("Planta Baja", "3 pisos").
+
+### Base secundaria: `Denue`
+(Directorio Estadístico Nacional de Unidades Económicas) — negocios en Yucatán. Columnas:
+- `id` (único), `nom_estab`, `raz_social`, `codigo_act`, `nombre_act`, `per_ocu`.
+- Dirección detallada: `tipo_vial`, `nom_vial`, intersecciones (`tipo_v_e_1`/`nom_v_e_1`, etc.), `numero_ext`/`int`, `edificio`, `tipo_asent`/`nomb_asent`, `cod_postal`.
+- Identificadores geo: `cve_ent`/`entidad`, `cve_mun`/`municipio`, `cve_loc`/`localidad`, `ageb`, `manzana`.
+- Contacto: `telefono`, `correoelec`.
+- `tipoUniEco` (Fijo, Móvil, Ambulante).
+- `latitud`, `longitud`.
+- `fecha_alta`, `tipo_actividad` (descripción amplia).
+
+## Límites y Supuestos
+- Ámbito geográfico principal: Mérida, Yucatán y zonas/colonias asociadas en `inmuebles_bbva`.
+- Operaciones: principalmente venta (contemplar alquiler/preventa si aparece).
+- **No simular datos** — usar solo los datos proporcionados.
+
+## Lenguaje y Precisión
+- Define y usa términos clave consistentemente ("amenities" = características/servicios del inmueble).
+- Si hablas de precios: especifica si es compra o renta; usa la moneda que corresponda.
+- Evita "barato"/"caro" sin métricas de respaldo; usa percentiles o comparativos claros.
+- Especifica unidades (m², MXN).
+- Cuando cites precios o superficies, indica rangos, medias y valores atípicos con precisión.
+- Realiza las descripciones de manera detallada.
+
+## Tarea 1: Análisis de Oferta + Integración DENUE
+
+### 1.1 Clasificación de inmuebles
+- Por `tipo_propiedad` (casa, departamento, oficina, local, terreno, etc.).
+- Por operación (venta, alquiler, anticrético, preventa).
+- Por rangos de precio y superficie (define rangos lógicos o basados en cuantiles).
+
+### 1.2 Frecuencia y Clusters (al menos 3 clusters)
+- Calcula frecuencia por ciudad y zona.
+- Detecta clusters de amenities/características diferenciales (cochera, áreas comunes, seguridad 24 h, vistas, certificaciones de sostenibilidad, potencial de reforma smart, etc.) con **k-medias**.
+
+### 1.3 Estadísticos Clave
+- Medias, mínimos, máximos de precio y superficie por combinaciones relevantes de `tipo_propiedad` y ciudad/zona.
+- Identifica inmuebles fuera de tendencia (outliers) para destacarlos como oportunidades o productos premium.
+- Determina antigüedad promedio y patrones de estado de construcción.
+
+### 1.4 Cruce con el contexto de la zona
+- Integra datos de zonas analizadas con `tipo_actividad`.
+- Identifica negocios relacionados con turismo, niveles socioeconómicos altos, galerías de arte, bazares de antigüedades, mercados orgánicos, festivales gastronómicos.
+- Detecta cadenas/marcas internacionales usando `nom_estab` y `raz_social`. Decláralas explícitamente en el texto.
+- Busca coincidencias de entidad, municipio y localidad entre la base secundaria y `dir_texto` de `inmuebles_bbva`.
+- Enlista los principales tipos de actividad en cada zona determinada por las coincidencias.
+- Valida precios similares en la zona (entre `inmuebles_bbva`) para identificar propiedades con mayor beneficio al menor precio posible; enumera esas propiedades con: url, tipo_propiedad, precio, m² y amenidades clave.
+- Relaciona amenidades presentes en la zona (contexto + características de inmuebles).
+
+## Tarea 2: Descripción y Perfiles de Clientes
+
+### 2.1 Descripción general del portafolio (300 palabras)
+1. Frase de enganche inicial.
+2. Panorámica por zona, tipos de inmueble y rangos de precio.
+3. Resalta particularidades diferenciales (premium, inversión, pluralidad de segmentos).
+4. Integra datos de contexto de estilo de vida/servicios.
+5. Integra establecimientos internacionales presentes en Mérida especificando el nombre de los establecimientos internacionales.
+6. Usa datos cuantitativos solo cuando aclaren (en texto corrido, no saturar).
+
+Formato de esta sección: incluye en la parte superior 1 imagen de Mérida obtenida de la web, descripción de la imagen y una frase característica de la vivienda.
+
+### 2.2 Descripción general de cada cluster por zona (250 palabras, sin tablas)
+Por cada cluster:
+1. Frase de enganche inicial.
+2. Panorámica por zona, tipos de inmueble, rangos de precio, características generales y diferenciales.
+3. Resalta particularidades diferenciales (premium, inversión, pluralidad de segmentos).
+4. Integra datos de contexto de estilo de vida/servicios importantes que hagan más atractiva la zona; menciona los establecimientos comerciales de mayor atracción.
+5. Usa datos cuantitativos solo cuando aclaren.
+
+Después de cada descripción: **Fortalezas y debilidades de la zona** (viñetas).
+
+### 2.3 Perfiles de cliente (3–5 perfiles, 250 palabras por perfil)
+Por cada perfil:
+1. Atributos demográficos aproximados + nivel socioeconómico.
+2. Estilo de vida, motivaciones de compra/alquiler, preocupaciones.
+3. **Argumentos de venta** alineados con conjuntos de inmuebles detectados. El argumento siempre debe comenzar con la palabra **"argumento de venta:"**.
+4. Relación explícita con zonas/tipos de inmueble más atractivos (justifica).
+5. Al final: resumen en bullet points de los principales puntos a destacar.
+
+Consideraciones: perfiles distintos y concretos para campañas segmentadas. Mantén formato consistente en cada perfil.
+
+#### Tabla comparativa entre perfiles:
+Columnas: Perfil · Demografía/NSE · Motivaciones · Preocupaciones · Tipos de inmueble preferidos · Zonas sugeridas · Argumentos clave.
+
+## Formato de Salida
+Usa encabezados numerados (H2/H3), tablas para comparaciones cuantitativas y viñetas para listas.
+
+### Orden de secciones mínimas:
+1. Descripción general del portafolio (imagen Mérida + descripción + frase)
+2. Descripción general de cada cluster por zona (sin tablas)
+3. Fortalezas y debilidades de cada zona
+4. Listado enumerado de propiedades con mayor beneficio/precio (url, tipo, precio, m², amenidades)
+5. Perfiles de cliente (descripción + bullet points)
+6. Tabla comparativa entre perfiles
+
+## Técnicas de Razonamiento y Calidad
+
+### Pensar paso a paso:
+- Expón la lógica para detectar clusters y outliers.
+- Desglosa problemas complejos en pasos intermedios.
+
+### Justificación y referencias:
+- Sustenta afirmaciones con evidencia de los datos.
+- Cuando infieras (ej. perfil demográfico), indícalo como inferencia basada en patrones del mercado.
+
+### Control de calidad:
+- Revisa consistencia de cifras.
+- Evita contradicciones entre texto y tablas.
+- Señala datos faltantes y cómo afectaron el análisis.
+
+## Equilibrio entre Detalle y Flexibilidad
+- Incluye suficiente detalle para que el informe sea accionable, pero permite creatividad en la redacción persuasiva.
+- Si descubres insights adicionales relevantes (ej. correlaciones inesperadas), inclúyelos justificadamente.
+
+## Iteración y Refinamiento
+1. Genera una primera versión completa.
+2. Señala dónde podría requerirse más detalle o datos adicionales.
+3. Permite instrucciones de seguimiento para ajustar o ampliar secciones específicas.
+
+## Reglas de Estilo Finales
+- Encabezados H2 para secciones principales; H3/H4 para subsecciones.
+- Evita repetir datos exactos en exceso.
+- No uses jerga técnica innecesaria para el público objetivo.
+- No omitas ninguna de las tareas o elementos solicitados.
+- No menciones explícitamente el cruce con la base secundaria en el texto final.
+- Sé creativo pero formal en las descripciones.
+- No escribas en ningún momento la cantidad de palabras restringidas en las descripciones.
+</textarea>
+
+<script>
+function copyPrompt() {
+  const ta = document.getElementById('prompt-raw');
+  navigator.clipboard.writeText(ta.value.trim()).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copiado';
+    btn.style.background = '#7FBC8C';
+    btn.style.color = '#fff';
+    setTimeout(() => { btn.textContent = orig; btn.style.background = ''; btn.style.color = ''; }, 2000);
+  });
+}
+</script>
+</body>
+</html>
