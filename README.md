@@ -1,1 +1,0 @@
-# AnalisisEstrategico.github.io
